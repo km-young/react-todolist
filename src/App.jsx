@@ -5,8 +5,8 @@ import CustomButton from './components/CustomButton';
 
 function App() {
   const [todos, setTodos] = useState([
-    {id: 1, title: '리액트 설치하기', todo: '리액트 설치'},
-    {id: 2, title: '리액트 실행하기', todo: '리액트 실행'},
+    {id: 1, title: '리액트 설치하기', todo: '리액트 설치', isDone: true},
+    {id: 2, title: '리액트 실행하기', todo: '리액트 실행', isDone: false},
   ]);
   const [title, setTitle] = useState('');
   const [todo, setTodo] = useState('');
@@ -16,16 +16,38 @@ function App() {
       id: todos.length + 1,
       title: title,
       todo: todo,
+      isDone: false,
     };
-    console.log(newTodo);
     setTodos([...todos, newTodo]);
   };
-
+ 
   const deleteTodoHandler = (id) => {
-    const newTodoList = todos.filter((todo) => todo.id !== id)
-    setTodos(newTodoList)
+    const newTodoList = todos.filter((todo) => todo.id !== id);
+    setTodos(newTodoList);
+  };
+
+  const onCompleteHandler = (id) => {
+    // 완료버튼을 누르면
+    // isDone-> true로 변경
+    const copyTodos = [...todos];
+    // const nodes = [...id.target.parentElement.children];
+    const index = todos.findIndex((todo)=>todo.id === id);
+    console.log(index)
+    copyTodos[index].isDone = true;
+    setTodos(copyTodos);
+    // 두번째 요소 완료버튼 누름 -> 두번째 라는걸 찾아야 하는데 몇번째인지 어떻게 찾을것인가.. 바꾸고 setStase를 coypuTodos 이용해서 수정.
+    // 아이디가 같은애를 찾는 함수
   }
 
+  const onCancelHandler = (id) => {
+    // 취소버튼을 누르면
+    // isDone-> false로 변경
+    const copyTodos = [...todos];
+    const index = todos.findIndex((todo) => todo.id === id);
+    console.log(index);
+    copyTodos[index].isDone = false;
+    setTodos(copyTodos);
+  }
   return (
     <div>
       <div className='top-title'>
@@ -55,12 +77,35 @@ function App() {
         <p className='font-30'>Working..🔥</p>
         <div className='card-box'>
           {todos.map((todo) => {
-            return <Cards handleDelete={deleteTodoHandler} todo={todo} key={todo.id}></Cards>;
+            if (todo.isDone == false) {
+              return (
+                <Cards
+                  handleDelete={deleteTodoHandler}
+                  handleComplete={onCompleteHandler}
+                  handleCancel={onCancelHandler}
+                  todo={todo}
+                  key={todo.id}
+                ></Cards>
+              );
+            }
           })}
         </div>
       </div>
       <div className='done'>
         <p className='font-30'>Done..!🎉</p>
+        <div className='card-box'>
+          {todos.map((todo) => {
+            if (todo.isDone == true) {
+              return (
+                <Cards
+                  handleDelete={deleteTodoHandler}
+                  todo={todo}
+                  key={todo.id}
+                ></Cards>
+              );
+            }
+          })}
+        </div>
       </div>
     </div>
   );
